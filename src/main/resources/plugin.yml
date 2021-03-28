@@ -1,5 +1,5 @@
 name: IslandChestValues
-version: 1.0.0
+version: ${project.version
 author: Ome_R
 main: com.ome_r.islandchestvalues.IslandChestValues
 depend:
