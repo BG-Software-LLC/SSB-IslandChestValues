@@ -3,7 +3,9 @@ This addon makes it so island worth will be depend on contents inside IslandChes
 
 ## Installation
 
-You can download it by opening the releases tab, at the right of the window. Then, drop the jar into the plugins folder, and start your server.
+1. Download the addon on our [Jenkins page](https://hub.bg-software.com/job/SuperiorSkyblock%20Addons/job/IslandChestValues/)!
+2. Drag the jar to the modules folder of SuperiorSkyblock.
+3. Start the server.
 
 ## Credits
 
