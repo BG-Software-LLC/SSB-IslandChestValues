@@ -1,90 +1,47 @@
 package com.bgsoftware.islandchestvalues;
 
-import com.bgsoftware.superiorskyblock.api.events.IslandWorthCalculatedEvent;
-import com.bgsoftware.superiorskyblock.api.island.Island;
-import com.bgsoftware.superiorskyblock.api.island.IslandChest;
-import com.bgsoftware.superiorskyblock.api.key.Key;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
+import com.bgsoftware.superiorskyblock.api.SuperiorSkyblock;
+import com.bgsoftware.superiorskyblock.api.commands.SuperiorCommand;
+import com.bgsoftware.superiorskyblock.api.modules.PluginModule;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class IslandChestValues extends JavaPlugin implements Listener {
+public final class IslandChestValues extends PluginModule implements Listener {
+
+    private JavaPlugin javaPlugin;
+
+    public IslandChestValues() {
+        super("IslandChestValues", "Ome_R");
+    }
 
     @Override
-    public void onEnable() {
-        getServer().getPluginManager().registerEvents(this, this);
+    public void onEnable(SuperiorSkyblock plugin) {
+        this.javaPlugin = (JavaPlugin) plugin;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onIslandCalc(IslandWorthCalculatedEvent e){
-        getServer().getScheduler().runTaskLater(this, () -> {
-            e.getIsland().clearBlockCounts();
-            for(IslandChest islandChest : e.getIsland().getChest()){
-                for(ItemStack itemStack : islandChest.getContents()){
-                    if(itemStack != null)
-                        e.getIsland().handleBlockPlace(Key.of(itemStack), itemStack.getAmount());
-                }
-            }
-        }, 1L);
+    @Override
+    public void onReload(SuperiorSkyblock plugin) {
+
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onIslandChestInteract(InventoryClickEvent e){
-        Inventory inventory = e.getView().getTopInventory();
-        InventoryHolder inventoryHolder = inventory == null ? null : inventory.getHolder();
+    @Override
+    public void onDisable(SuperiorSkyblock plugin) {
 
-        if(!(inventoryHolder instanceof IslandChest))
-            return;
+    }
 
-        Island island = ((IslandChest) inventoryHolder).getIsland();
+    @Override
+    public Listener[] getModuleListeners(SuperiorSkyblock superiorSkyblock) {
+        return new Listener[]{new IslandChestListener(javaPlugin)};
+    }
 
-        switch (e.getAction()){
-            case MOVE_TO_OTHER_INVENTORY:
-                if(e.getClickedInventory() != inventory) {
-                    island.handleBlockPlace(Key.of(e.getCurrentItem()), e.getCurrentItem().getAmount());
-                }
-                else{
-                    island.handleBlockBreak(Key.of(e.getCurrentItem()), e.getCurrentItem().getAmount());
-                }
-                break;
-            case PLACE_ALL:
-                if(e.getClickedInventory() == inventory)
-                    island.handleBlockPlace(Key.of(e.getCursor()), e.getCursor().getAmount());
-                break;
-            case PLACE_ONE:
-                if(e.getClickedInventory() == inventory)
-                    island.handleBlockPlace(Key.of(e.getCursor()), 1);
-                break;
-            case PICKUP_ALL:
-                if(e.getClickedInventory() == inventory)
-                    island.handleBlockBreak(Key.of(e.getCurrentItem()), e.getCurrentItem().getAmount());
-                break;
-            case PICKUP_HALF:
-                if(e.getClickedInventory() == inventory)
-                    island.handleBlockBreak(Key.of(e.getCurrentItem()), e.getCurrentItem().getAmount() / 2);
-                break;
-            case PICKUP_ONE:
-                if(e.getClickedInventory() == inventory)
-                    island.handleBlockBreak(Key.of(e.getCurrentItem()), 1);
-                break;
-            case HOTBAR_SWAP: {
-                ItemStack itemStack = e.getView().getBottomInventory().getItem(e.getHotbarButton());
-                island.handleBlockPlace(Key.of(itemStack), itemStack.getAmount());
-                break;
-            }
-            case HOTBAR_MOVE_AND_READD: {
-                ItemStack itemStack = e.getView().getBottomInventory().getItem(e.getHotbarButton());
-                island.handleBlockPlace(Key.of(itemStack), itemStack.getAmount());
-                island.handleBlockBreak(Key.of(e.getCurrentItem()), e.getCurrentItem().getAmount());
-                break;
-            }
-        }
+    @Override
+    public SuperiorCommand[] getSuperiorCommands(SuperiorSkyblock superiorSkyblock) {
+        return null;
+    }
 
+    @Override
+    public SuperiorCommand[] getSuperiorAdminCommands(SuperiorSkyblock superiorSkyblock) {
+        return null;
     }
 
 }

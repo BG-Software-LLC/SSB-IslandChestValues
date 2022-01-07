@@ -1,12 +1,11 @@
 plugins {
     id 'java'
-    id 'maven'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
     id 'maven-publish'
 }
 
 group 'SSB-IslandChestValues'
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     maven { url 'https://repo.bg-software.com/repository/nms/' }
@@ -15,7 +14,7 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:v1_8_R3-Taco:latest"
-    compileOnly "com.bgsoftware:SuperiorSkyblockAPI:latest"
+    compileOnly "com.bgsoftware:SuperiorSkyblockAPI:1.8.3"
 }
 
 processResources {
@@ -32,7 +31,11 @@ processResources {
 shadowJar {
     dependsOn(jar)
 
-    archiveName = rootProject.name + ".jar"
+    if (System.getenv("BUILD_NUMBER") == null) {
+        archiveName = rootProject.name + "-" + version + ".jar"
+    } else {
+        archiveName = rootProject.name + "-" + version + "-b" + System.getenv("BUILD_NUMBER") + ".jar"
+    }
 
     delete fileTree('./target/') {
         exclude archiveName
